@@ -43,18 +43,59 @@ Follow up:
 """
 
 
-class Solution:
-    def countBits(self, n: int):
-        res = []
+import math
 
-        def fn_count_bit(num):
-            count = 0
-            while num != 0:
-                count += (num & 1)
-                num = num >> 1
-            return count
+class Solution:
+    """
+    # Idea
+
+    1 thing I notice is that we can have some ways to calculate number n+1 if we
+    already have bit count of number n. But the bit number can be flipped
+
+    Number of bits increase if n is exponent of 2
+
+
+    0 -> 0 (1, 0) ------------------|
+    1 -> 1 (1, 1)                   |
+                                    |
+    2 -> 10 (2, 1) -----------------|
+    3 -> 11 (2, 2)                  |
+                                    |
+    4 -> 100 (3, 1) ----------------|
+    5 -> 101 (3, 2)                 |
+    6 -> 110 (3, 2)                 |
+    7 -> 111 (3, 3)                 |
+                                    |
+    8 -> 1000 (3, 1) _______________| 
+    9 -> 1001 (3, 2)
+    10 -> 1010 (3, 1)
+    11 -> 1011 (3, 2)
+    12 -> 1100 (3, 1)
+    13 -> 1101 (3
+    14 -> 1110 (4, )
+    15 -> 1111 (4
+
+
+    Oh, I can see a pattern:
+        bits[n] = 1 + bits[n exlude most significant bits of n]
+        // Look up is O(1), iterate takes O(n)
+    """
+    def countBits(self, n: int):
+
+        def fn_largest_bit(num):
+            # There must have bitwise op that do this
+            return (int) (math.log2(num))
+        def fn_remove_largest_bit(num):
+            pos = fn_largest_bit(num)
+            return num ^ (1 << pos)
+
+        res = []
         for num in range(0, n + 1):
-            res.append(fn_count_bit(num))
+            if num == 0:
+                res.append(0)
+            else:
+                index = fn_remove_largest_bit(num)
+                res.append(1 + res[index])
         return res
 
 
